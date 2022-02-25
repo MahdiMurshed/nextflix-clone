@@ -5,6 +5,7 @@ import NavBar from "@/components/navbar/NavBar";
 import { getVideos, getPopularVideos } from "lib/videos";
 import Head from "next/head";
 import Image from "next/image";
+import { m } from "lib/magic-client";
 
 export default function Home({
   disneyVid,

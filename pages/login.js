@@ -1,24 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { m } from "lib/magic-client";
+import Loading from "@/components/loading";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [msg, setMsg] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setLoading(false);
+    };
+
+    router.events.on("routeChangeStart", handleRouteChange);
+
+    // If the component is unmounted, unsubscribe
+    // from the event with the `off` method:
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChange);
+    };
+  }, [loading, router]);
+
   const handleChange = (e) => {
     setMsg("");
     setEmail(e.target.value);
   };
-  const handleClick = (e) => {
+  const handleClick = async (e) => {
     e.preventDefault();
     if (email) {
-      router.push("/");
+      setLoading(true);
+      try {
+        await m.auth.loginWithMagicLink({ email });
+        router.push("/");
+      } catch (err) {
+        console.log(err);
+      }
     } else {
       setMsg("Please enter email");
     }
   };
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <div
       style={{
@@ -61,7 +88,7 @@ const Login = () => {
             className="bg-[color:var(--red10)] px-12 py-2 mt-6  rounded-md text-lg"
             onClick={handleClick}
           >
-            Sign In
+            {loading ? "loading...." : "Sign In"}
           </button>
         </div>
       </main>
