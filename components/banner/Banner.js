@@ -1,9 +1,12 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useRouter } from "next/router";
 
 const Banner = ({ title, subTitle, imgUrl }) => {
+  const router = useRouter();
   const handlePlay = (e) => {
     console.log(e);
+    router.push("/video/DfSnHyIryeY");
   };
   return (
     <div className=" w-full h-[80vh] relative">
